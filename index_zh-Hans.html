@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三天三夜桌游社 - 桌游×APP游戏</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 引入Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1', // 主色调：靛蓝色，传达创意与游戏感
+                        secondary: '#EC4899', // 辅助色：粉红色，增添活力
+                        dark: '#1F2937', // 深色：用于文本和背景
+                        light: '#F9FAFB', // 浅色：用于背景
+                        accent: '#F59E0B', // 强调色：琥珀色，用于CTA按钮
+                    },
+                    fontFamily: {
+                        game: ['"Press Start 2P"', 'cursive', 'sans-serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            }
+            .card-hover {
+                @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+            }
+            .btn-primary {
+                @apply bg-accent hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg;
+            }
+            .btn-secondary {
+                @apply bg-primary hover:bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg;
+            }
+        }
+    </style>
+    
+    <!-- 引入Google字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-dark to-gray-800 text-light min-h-screen">
+    <!-- 导航栏 -->
+    <header id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-dark/80 backdrop-blur-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="/" class="flex items-center gap-2">
+                <!-- <div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+                    <i class="fa fa-gamepad text-2xl"></i>
+                </div>
+                <span class="font-game text-xl text-white">三天三夜</span> -->
+                <div class="flex items-center justify-center gap-3 mb-4">
+                    <img src="assets/images/logo.svg" alt="Three Days & Three Nights Logo" style="width: 5rem;">
+                </div>
+            </a>
+            
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#home" class="text-white hover:text-accent transition-colors font-medium">首页</a>
+                <a href="#games" class="text-white hover:text-accent transition-colors font-medium">游戏</a>
+                <a href="#physical" class="text-white hover:text-accent transition-colors font-medium">实物周边</a>
+                <a href="#about" class="text-white hover:text-accent transition-colors font-medium">关于我们</a>
+                <a href="#contact" class="text-white hover:text-accent transition-colors font-medium">联系我们</a>
+                <!-- <a href="#" class="btn-primary py-2 px-4 text-sm">
+                    <i class="fa fa-download mr-2"></i>下载APP
+                </a> -->
+            </nav>
+            
+            <!-- 移动端菜单按钮 -->
+            <button id="menuBtn" class="md:hidden text-white text-2xl">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobileMenu" class="md:hidden hidden bg-gray-900/95 backdrop-blur-md">
+            <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
+                <a href="#home" class="text-white hover:text-accent py-2 border-b border-gray-700 transition-colors">首页</a>
+                <a href="#games" class="text-white hover:text-accent py-2 border-b border-gray-700 transition-colors">游戏</a>
+                <a href="#physical" class="text-white hover:text-accent py-2 border-b border-gray-700 transition-colors">实物周边</a>
+                <a href="#about" class="text-white hover:text-accent py-2 border-b border-gray-700 transition-colors">关于我们</a>
+                <a href="#contact" class="text-white hover:text-accent py-2 transition-colors">联系我们</a>
+                <!-- <a href="#" class="btn-primary text-center">
+                    <i class="fa fa-download mr-2"></i>下载APP
+                </a> -->
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- 英雄区域 -->
+        <section id="home" class="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
+            <div class="absolute inset-0 bg-[url('assets/images/bgs/bg0.jpg')] bg-cover bg-center opacity-100"></div>
+            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-dark/50 to-dark"></div>
+            
+            <!-- 装饰元素 -->
+            <div class="absolute top-20 left-10 w-20 h-20 rounded-full bg-primary/30 blur-xl animate-pulse-slow"></div>
+            <div class="absolute bottom-20 right-10 w-32 h-32 rounded-full bg-secondary/30 blur-xl animate-pulse-slow" style="animation-delay: 1s;"></div>
+            
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="max-w-4xl mx-auto text-center">
+                    <!-- <div class="flex items-center justify-center gap-3 mb-4 animate-float">
+                        <img src="assets/images/logo.svg" alt="Three Days & Three Nights Logo" style="width: 10rem;">
+                    </div> -->
+                    <!-- <h1 class="font-game text-[clamp(2rem,5vw,4rem)] text-white mb-6 leading-tight text-shadow animate-float">
+                        三天三夜<br>桌游社
+                    </h1> -->
+                    <div class="mb-12 animate-float">
+                        <div class="flex items-center justify-center gap-3 mb-4">
+                            <img src="assets/images/logo.svg" alt="Three Days & Three Nights Logo" style="width: 10rem;">
+                        </div>
+                        <p class="text-gray-300 text-lg md:text-xl">桌游社 | Board Game Studio</p>
+                    </div>
+                    <p class="text-xl md:text-2xl text-gray-300 mb-10 max-w-2xl mx-auto">
+                        我们将好玩的桌游搬进手机APP，随时随地享受桌游乐趣。支持单人挑战与多人联机，更有实体桌游等你来收藏！
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="#games" class="btn-primary">
+                            <i class="fa fa-gamepad mr-2"></i>探索游戏
+                        </a>
+                        <a href="#physical" class="btn-secondary">
+                            <i class="fa fa-shopping-cart mr-2"></i>购买实物
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 手机展示 -->
+                <div class="mt-16 flex justify-center">
+                    <div class="relative">
+                        <div class="w-[280px] h-[560px] md:w-[320px] md:h-[640px] rounded-[3rem] border-8 border-gray-800 bg-gray-900 shadow-2xl overflow-hidden relative">
+                            <img src="assets/images/prod-new.jpg" alt="三天三夜桌游社APP界面展示" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-dark/80 to-transparent"></div>
+                        </div>
+                        <!-- 装饰元素 -->
+                        <div class="absolute -bottom-5 -right-5 w-24 h-24 bg-accent rounded-full flex items-center justify-center shadow-lg animate-pulse-slow">
+                            <span class="font-game text-white text-3xl text-center">新品</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 特色介绍 -->
+        <section class="py-16 bg-dark/50">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">我们的<span class="text-primary">特色</span></h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">我们将传统桌游与现代科技完美结合，打造独特的游戏体验</p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- 特色1 -->
+                    <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-8 card-hover border border-gray-700">
+                        <div class="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center mb-6">
+                            <i class="fa fa-mobile text-3xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">随时随地游戏</h3>
+                        <p class="text-gray-400">将桌游装进手机，无论是通勤还是休息，打开APP即可开始游戏，无需携带厚重的桌游配件。</p>
+                    </div>
+                    
+                    <!-- 特色2 -->
+                    <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-8 card-hover border border-gray-700">
+                        <div class="w-14 h-14 rounded-full bg-secondary/20 flex items-center justify-center mb-6">
+                            <i class="fa fa-users text-3xl text-secondary"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">灵活游戏模式</h3>
+                        <p class="text-gray-400">支持单人挑战AI，也可以邀请好友联机对战，无论是独自一人还是聚会派对，都能找到合适的玩法。</p>
+                    </div>
+                    
+                    <!-- 特色3 -->
+                    <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-8 card-hover border border-gray-700">
+                        <div class="w-14 h-14 rounded-full bg-accent/20 flex items-center justify-center mb-6">
+                            <i class="fa fa-gift text-3xl text-accent"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">实物收藏选择</h3>
+                        <p class="text-gray-400">喜爱传统桌游的触感？我们提供精选实体桌游购买，让你既能享受数字便利，也能拥有实体收藏。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 游戏展示区 -->
+        <section id="games" class="py-20 relative">
+            <div class="absolute inset-0 bg-[url('assets/images/bgs/3-1920x1080.jpg')] bg-cover bg-center opacity-5"></div>
+            
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-bold mb-4">我们的<span class="text-primary">游戏</span></h2>
+                        <p class="text-gray-400 max-w-2xl">精选桌游改编，原汁原味保留核心玩法，同时优化移动端操作体验</p>
+                    </div>
+                    
+                    <!-- 游戏筛选标签 -->
+                    <!-- <div class="flex flex-wrap gap-2 mt-6 md:mt-0">
+                        <button class="game-filter active px-4 py-2 rounded-full bg-primary text-white text-sm font-medium">全部游戏</button>
+                        <button class="game-filter px-4 py-2 rounded-full bg-gray-700 text-white text-sm font-medium hover:bg-gray-600 transition-colors">单人游戏</button>
+                        <button class="game-filter px-4 py-2 rounded-full bg-gray-700 text-white text-sm font-medium hover:bg-gray-600 transition-colors">多人游戏</button>
+                    </div> -->
+                </div>
+                
+                <!-- 游戏卡片网格 -->
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- 游戏1 -->
+                     <div class="game-card bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700" data-type="single">
+                        <div class="relative">
+                            <img src="assets/images/games/game_colordeduce.jpg" alt="逻辑谜题游戏封面" class="w-full h-48 object-cover">
+                            <div class="absolute top-3 right-3 bg-primary text-white text-xs font-bold px-2 py-1 rounded">单人</div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold mb-2">颜色推断</h3>
+                            <p class="text-gray-400 text-sm mb-4">益智类桌游，锻炼大脑推理能力，根据反馈推密码盒中球的颜色和位置。</p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <!-- <i class="fa fa-star text-yellow-400"></i>
+                                    <span class="ml-1 text-sm">4.6</span> -->
+                                </div>
+                                <!-- <a href="#" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center">
+                                    了解详情 <i class="fa fa-arrow-right ml-1"></i>
+                                </a> -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="game-card bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700" data-type="multiplayer">
+                        <div class="relative">
+                            <img src="assets/images/games/game_dinosaurchess.jpg" alt="策略大师游戏封面" class="w-full h-48 object-cover">
+                            <div class="absolute top-3 right-3 bg-secondary text-white text-xs font-bold px-2 py-1 rounded">单人/多人</div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold mb-2">恐龙牌</h3>
+                            <p class="text-gray-400 text-sm mb-4">一款策略与运气共存的桌游，根据需要打出手中的牌，率先打完手中的牌获得胜利。</p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <!-- <i class="fa fa-star text-yellow-400"></i>
+                                    <span class="ml-1 text-sm">4.8</span> -->
+                                </div>
+                                <!-- <a href="#" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center">
+                                    了解详情 <i class="fa fa-arrow-right ml-1"></i>
+                                </a> -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 游戏2 -->
+                    <div class="game-card bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700" data-type="single">
+                        <div class="relative">
+                            <img src="assets/images/games/game_aeroplanechess.jpg" alt="密室逃脱游戏封面" class="w-full h-48 object-cover">
+                            <div class="absolute top-3 right-3 bg-secondary text-white text-xs font-bold px-2 py-1 rounded">单人/多人</div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold mb-2">飞行棋</h3>
+                            <p class="text-gray-400 text-sm mb-4">解谜类桌游，破解一系列谜题，逃离充满挑战的密室。</p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <!-- <i class="fa fa-star text-yellow-400"></i>
+                                    <span class="ml-1 text-sm">4.6</span> -->
+                                </div>
+                                <!-- <a href="#" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center">
+                                    了解详情 <i class="fa fa-arrow-right ml-1"></i>
+                                </a> -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 游戏3 -->
+                    <div class="game-card bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700" data-type="multiplayer">
+                        <div class="relative">
+                            <img src="assets/images/games/game_workplace.jpg" alt="狼人之夜游戏封面" class="w-full h-48 object-cover">
+                            <div class="absolute top-3 right-3 bg-secondary text-white text-xs font-bold px-2 py-1 rounded">单人/多人</div>
+                            <div class="absolute top-3 left-3 bg-accent text-white text-xs font-bold px-2 py-1 rounded">热门</div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold mb-2">杜杜拉升职挑战</h3>
+                            <p class="text-gray-400 text-sm mb-4">职场过关升级的趣味问答游戏。</p>
+                            <div class="flex justify-between items-center">
+                                <!-- <div class="flex items-center">
+                                    <i class="fa fa-star text-yellow-400"></i>
+                                    <span class="ml-1 text-sm">4.9</span>
+                                </div> -->
+                                <!-- <a href="#" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center">
+                                    了解详情 <i class="fa fa-arrow-right ml-1"></i>
+                                </a> -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 游戏4 -->
+                    <div class="game-card bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700" data-type="single">
+                        <div class="relative">
+                            <img src="assets/images/games/game_tarotcards.jpg" alt="卡牌大师游戏封面" class="w-full h-48 object-cover">
+                            <div class="absolute top-3 right-3 bg-primary text-white text-xs font-bold px-2 py-1 rounded">单人</div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold mb-2">塔罗牌</h3>
+                            <p class="text-gray-400 text-sm mb-4">风靡世界的一种通过牌面图象解读未来、探索内心的神秘工具。</p>
+                            <div class="flex justify-between items-center">
+                                <!-- <div class="flex items-center">
+                                    <i class="fa fa-star text-yellow-400"></i>
+                                    <span class="ml-1 text-sm">4.7</span>
+                                </div> -->
+                                <!-- <a href="#" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center">
+                                    了解详情 <i class="fa fa-arrow-right ml-1"></i>
+                                </a> -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 游戏5 -->
+                    <div class="game-card bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700" data-type="multiplayer">
+                        <div class="relative">
+                            <img src="assets/images/games/game_mancala.jpg" alt="城市建设游戏封面" class="w-full h-48 object-cover">
+                            <div class="absolute top-3 right-3 bg-secondary text-white text-xs font-bold px-2 py-1 rounded">单人/两人</div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold mb-2">播种棋</h3>
+                            <p class="text-gray-400 text-sm mb-4">一种战略性桌游，玩家通过种植和收获棋子来争夺胜利。</p>
+                            <div class="flex justify-between items-center">
+                                <!-- <div class="flex items-center">
+                                    <i class="fa fa-star text-yellow-400"></i>
+                                    <span class="ml-1 text-sm">4.5</span>
+                                </div> -->
+                                <!-- <a href="#" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center">
+                                    了解详情 <i class="fa fa-arrow-right ml-1"></i>
+                                </a> -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 游戏6 -->
+                    <div class="game-card bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700" data-type="single">
+                        <div class="relative">
+                            <img src="assets/images/games/game_thelordsdecision.jpg" alt="冒险旅程游戏封面" class="w-full h-48 object-cover">
+                            <div class="absolute top-3 right-3 bg-secondary text-white text-xs font-bold px-2 py-1 rounded">单人/多人</div>
+                            <div class="absolute top-3 left-3 bg-accent text-white text-xs font-bold px-2 py-1 rounded">新发布</div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold mb-2">城主的决策</h3>
+                            <p class="text-gray-400 text-sm mb-4">角色扮演桌游，每一位玩家都拥有一个城池。每一回合做出一个决策。</p>
+                            <div class="flex justify-between items-center">
+                                <!-- <div class="flex items-center">
+                                    <i class="fa fa-star text-yellow-400"></i>
+                                    <span class="ml-1 text-sm">4.8</span>
+                                </div> -->
+                                <!-- <a href="#" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center">
+                                    了解详情 <i class="fa fa-arrow-right ml-1"></i>
+                                </a> -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 游戏7 -->
+                    <div class="game-card bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700" data-type="multiplayer">
+                        <div class="relative">
+                            <img src="assets/images/games/game_gemsecret.jpg" alt="贸易商人游戏封面" class="w-full h-48 object-cover">
+                            <div class="absolute top-3 right-3 bg-secondary text-white text-xs font-bold px-2 py-1 rounded">单人/两人</div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold mb-2">宝石秘密</h3>
+                            <p class="text-gray-400 text-sm mb-4">经济策略桌游，通过买卖商品，积累财富，成为最富有的商人。</p>
+                            <div class="flex justify-between items-center">
+                                <!-- <div class="flex items-center">
+                                    <i class="fa fa-star text-yellow-400"></i>
+                                    <span class="ml-1 text-sm">4.4</span>
+                                </div> -->
+                                <!-- <a href="#" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center">
+                                    了解详情 <i class="fa fa-arrow-right ml-1"></i>
+                                </a> -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 游戏8 -->
+                    
+                </div>
+                
+                <!-- <div class="text-center mt-12">
+                    <a href="#" class="btn-secondary inline-flex items-center">
+                        查看全部游戏 <i class="fa fa-chevron-right ml-2"></i>
+                    </a>
+                </div> -->
+            </div>
+        </section>
+        
+        <!-- 游戏数据统计 -->
+        <section class="py-16 bg-gray-900/80 backdrop-blur-sm">
+            <div class="container mx-auto px-4">
+                <!-- <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">玩家<span class="text-primary">数据</span></h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">我们的游戏受到了广大玩家的喜爱</p>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+                    <div class="bg-gray-800/50 rounded-xl p-6 text-center">
+                        <div class="text-4xl md:text-5xl font-bold text-primary mb-2 counter" data-target="500000">0</div>
+                        <p class="text-gray-400">注册用户</p>
+                    </div>
+                    <div class="bg-gray-800/50 rounded-xl p-6 text-center">
+                        <div class="text-4xl md:text-5xl font-bold text-secondary mb-2 counter" data-target="12">0</div>
+                        <p class="text-gray-400">游戏数量</p>
+                    </div>
+                    <div class="bg-gray-800/50 rounded-xl p-6 text-center">
+                        <div class="text-4xl md:text-5xl font-bold text-accent mb-2 counter" data-target="15000000">0</div>
+                        <p class="text-gray-400">游戏次数</p>
+                    </div>
+                    <div class="bg-gray-800/50 rounded-xl p-6 text-center">
+                        <div class="text-4xl md:text-5xl font-bold text-green-400 mb-2 counter" data-target="4.7">0</div>
+                        <p class="text-gray-400">平均评分</p>
+                    </div>
+                </div> -->
+                
+                <!-- 游戏类型分布图 -->
+                <div class="bg-gray-800/50 rounded-xl p-6 md:p-8">
+                    <h3 class="text-xl font-bold mb-6">游戏类型分布(包含策划中的游戏)</h3>
+                    <div class="h-80">
+                        <canvas id="gameTypeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+
+
+        <!-- 实物桌游购买区 -->
+        <section id="physical" class="py-20 relative">
+            <div class="absolute inset-0 bg-[url('assets/images/bgs/4-1920x1080.jpg')] bg-cover bg-center opacity-5"></div>
+            
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">实体<span class="text-secondary">桌游</span>购买</h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">除了APP版本，我们还提供高品质的实体桌游，让你享受传统桌游的乐趣</p>
+                </div>
+                
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- 实物1 -->
+                    <div class="bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700">
+                        <div class="relative">
+                            <img src="assets/images/products/prod_colordeduce.jpg" alt="狼人之夜实体桌游" class="w-full h-48 object-cover">
+                            <!-- <div class="absolute top-3 left-3 bg-accent text-white text-xs font-bold px-2 py-1 rounded">热销</div> -->
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold">颜色推断 实体版</h3>
+                                <span class="text-accent font-bold">¥?</span>
+                            </div>
+                            <p class="text-gray-400 text-sm mb-4">包含密码盒、棋盘、彩球、反馈色块和规则手册，须2人游戏。</p>
+                            <button class="w-full bg-primary hover:bg-primary/80 text-white font-bold py-2 rounded-lg transition-colors flex items-center justify-center" style="background-color: #3f3f3f;">
+                                <i class="fa fa-shopping-cart mr-2"></i> 
+                                即将到来
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 实物2 -->
+                    <div class="bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700">
+                        <div class="relative">
+                            <img src="assets/images/products/prod_dinosaurchess.jpg" alt="狼人之夜实体桌游" class="w-full h-48 object-cover">
+                            <!-- <div class="absolute top-3 left-3 bg-accent text-white text-xs font-bold px-2 py-1 rounded">热销</div> -->
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold">恐龙牌 实体版</h3>
+                                <span class="text-accent font-bold">¥?</span>
+                            </div>
+                            <p class="text-gray-400 text-sm mb-4">包含牌桌、一套恐龙卡牌、恐龙小百科和规则手册，适合2~4人游戏。</p>
+                            <button class="w-full bg-primary hover:bg-primary/80 text-white font-bold py-2 rounded-lg transition-colors flex items-center justify-center" style="background-color: #3f3f3f;">
+                                <i class="fa fa-shopping-cart mr-2"></i> 
+                                即将到来
+                            </button>
+                        </div>
+                    </div>
+                  
+                </div>
+                
+            </div>
+        </section>
+        
+
+        <!-- 关于我们 -->
+        <section id="about" class="py-20 bg-gray-900/80 backdrop-blur-sm">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col lg:flex-row gap-12 items-center">
+                    <div class="lg:w-1/2">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-6">关于<span class="text-primary">三天三夜</span></h2>
+                        <p class="text-gray-300 mb-4">
+                            "三天三夜"桌游社于2025年在上海成立，由一群热爱桌游的游戏设计师和开发者创立。我们的使命是将经典桌游的乐趣带给更多人，同时利用现代科技拓展桌游的可能性。
+                        </p>
+                        <p class="text-gray-300 mb-6">
+                            我们相信桌游不仅是一种娱乐方式，更是连接人与人的桥梁。无论是面对面的实体桌游，还是通过APP进行的线上游戏，核心价值都在于带来欢乐和促进交流。
+                        </p>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-8">
+                            <div class="bg-gray-800/50 p-4 rounded-lg">
+                                <h4 class="font-bold text-primary mb-1">我们的愿景</h4>
+                                <p class="text-gray-400 text-sm">让桌游成为每个人生活中的一部分</p>
+                            </div>
+                            <div class="bg-gray-800/50 p-4 rounded-lg">
+                                <h4 class="font-bold text-secondary mb-1">我们的使命</h4>
+                                <p class="text-gray-400 text-sm">创新桌游体验，连接人与乐趣</p>
+                            </div>
+                        </div>
+                        
+                        <!-- <a href="#contact" class="btn-primary inline-flex items-center">
+                            联系我们 <i class="fa fa-envelope ml-2"></i>
+                        </a> -->
+                    </div>
+                    
+                    <div class="lg:w-1/2 grid grid-cols-2 gap-4">
+                        <img src="assets/images/imgs/30-600x800.jpg" alt="桌游社团队照片" class="rounded-lg h-64 object-cover col-span-2 row-span-2">
+                        <img src="assets/images/imgs/32-600x400.jpg" alt="游戏设计过程" class="rounded-lg h-32 object-cover">
+                        <img src="assets/images/imgs/33-600x400.jpg" alt="桌游测试活动" class="rounded-lg h-32 object-cover">
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 下载APP区域 -->
+        <section class="py-20 relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20"></div>
+            <div class="absolute top-0 left-0 w-full h-full bg-[url('assets/images/bgs/5-1920x1080.jpg')] bg-cover bg-center opacity-10"></div>
+            
+            <!-- 装饰元素 -->
+            <div class="absolute top-0 right-0 w-64 h-64 rounded-full bg-primary/10 blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-secondary/10 blur-3xl"></div>
+            
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="max-w-4xl mx-auto bg-gray-800/80 backdrop-blur-md rounded-2xl p-8 md:p-12 border border-gray-700 shadow-2xl">
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="md:w-1/2">
+                            <h2 class="text-3xl md:text-4xl font-bold mb-4">下载我们的游戏</h2>
+                            <p class="text-gray-300 mb-6">
+                                随时随地享受桌游乐趣，定期更新新游戏和功能。
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <a href="javascript:void(0)" class="bg-black hover:bg-gray-900 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center" style="background-color: #1d1d1d;">
+                                    <i class="fa fa-apple text-2xl mr-3"></i>
+                                    <div class="text-left">
+                                        <div class="text-xs">即将到来</div>
+                                        <div>App Store</div>
+                                    </div>
+                                </a>
+                                <a href="https://play.google.com/store/apps/developer?id=STSY" class="bg-black hover:bg-gray-900 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center" style="background-color: #1d1d1d;">
+                                    <i class="fa fa-android text-2xl mr-3"></i>
+                                    <div class="text-left">
+                                        <div class="text-xs">即将到来</div>
+                                        <div>Google Play</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="md:w-1/2 flex justify-center">
+                            <img src="assets/images/httpwww.png" alt="三天三夜APP下载二维码" class="w-48 h-48 rounded-lg shadow-lg border-4 border-white">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 联系我们 -->
+        <section id="contact" class="py-20 bg-dark/50">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">联系<span class="text-secondary">我们</span></h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">有任何问题或建议？请随时与我们联系</p>
+                </div>
+                
+                    
+                    <div class="lg:w-2/3" style="margin: 0 auto;">
+                        <div class="bg-gray-800/60 backdrop-blur-sm rounded-xl p-8 border border-gray-700">
+                            <h3 class="text-2xl font-bold mb-6">发送消息</h3>
+                            
+                            <form action="mailto:stsy333@gmail.com?subject=来自网站的联系消息" method="post" enctype="text/plain">
+                                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                                    <div>
+                                        <label for="name" class="block text-gray-300 mb-2">姓名</label>
+                                        <input type="text" id="name" name="name" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                    </div>
+                                    <div>
+                                        <label for="email" class="block text-gray-300 mb-2">邮箱</label>
+                                        <input type="email" id="email" name="email" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label for="subject" class="block text-gray-300 mb-2">主题</label>
+                                    <input type="text" id="subject" name="subject" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label for="message" class="block text-gray-300 mb-2">消息内容</label>
+                                    <textarea id="message" name="message" rows="5" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                                </div>
+                                
+                                <button type="submit" class="btn-primary">
+                                    <i class="fa fa-paper-plane mr-2"></i> 发送消息
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 py-12 border-t border-gray-800">
+        <div class="container mx-auto px-4">
+            
+            <div class="pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+                <p>将桌游搬进手机，随时随地享受桌游乐趣，连接人与游戏的桥梁。</p>
+                <p>&copy; 2025 三天三夜桌游社. 保留所有权利.邮箱:stsy333@gmail.com</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" class="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg transform transition-all duration-300 opacity-0 translate-y-10" style="z-index: 999;">
+        <i class="fa fa-arrow-up"></i>
+    </button>
+    
+    <!-- JavaScript -->
+    <script>
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        const backToTop = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 100) {
+                navbar.classList.add('py-2', 'shadow-lg');
+                navbar.classList.remove('py-3');
+                backToTop.classList.remove('opacity-0', 'translate-y-10');
+                backToTop.classList.add('opacity-100', 'translate-y-0');
+            } else {
+                navbar.classList.add('py-3');
+                navbar.classList.remove('py-2', 'shadow-lg');
+                backToTop.classList.add('opacity-0', 'translate-y-10');
+                backToTop.classList.remove('opacity-100', 'translate-y-0');
+            }
+        });
+        
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        menuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+            if (mobileMenu.classList.contains('hidden')) {
+                menuBtn.innerHTML = '<i class="fa fa-bars"></i>';
+            } else {
+                menuBtn.innerHTML = '<i class="fa fa-times"></i>';
+            }
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // 关闭移动菜单（如果打开）
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                    menuBtn.innerHTML = '<i class="fa fa-bars"></i>';
+                }
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // 返回顶部
+        backToTop.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 游戏筛选功能
+        const filterButtons = document.querySelectorAll('.game-filter');
+        const gameCards = document.querySelectorAll('.game-card');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // 更新按钮样式
+                filterButtons.forEach(btn => {
+                    btn.classList.remove('active', 'bg-primary');
+                    btn.classList.add('bg-gray-700');
+                });
+                this.classList.add('active', 'bg-primary');
+                this.classList.remove('bg-gray-700');
+                
+                const filter = this.textContent.trim();
+                
+                // 筛选游戏卡片
+                gameCards.forEach(card => {
+                    if (filter === '全部游戏' || card.dataset.type === filter.toLowerCase()) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // 数字计数动画
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200; // 动画速度
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = +counter.getAttribute('data-target');
+                    const count = +counter.innerText;
+                    const increment = target / speed;
+                    
+                    if (count < target) {
+                        counter.innerText = (count + increment).toFixed(target % 1 === 0 ? 0 : 1);
+                        setTimeout(() => {
+                            counter.innerText = (count + increment).toFixed(target % 1 === 0 ? 0 : 1);
+                        }, 1);
+                    } else {
+                        counter.innerText = target.toFixed(target % 1 === 0 ? 0 : 1);
+                        observer.unobserve(counter);
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        counters.forEach(counter => {
+            observer.observe(counter);
+        });
+        
+        // 游戏类型图表
+        const ctx = document.getElementById('gameTypeChart').getContext('2d');
+        const gameTypeChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['策略类', '社交推理', '卡牌游戏', '角色扮演', '益智解谜', '经济模拟'],
+                datasets: [{
+                    data: [30, 20, 15, 10, 15, 10],
+                    backgroundColor: [
+                        '#6366F1', // primary
+                        '#EC4899', // secondary
+                        '#F59E0B', // accent
+                        '#10B981', // green
+                        '#3B82F6', // blue
+                        '#8B5CF6'  // purple
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: '#F9FAFB',
+                            font: {
+                                family: 'Inter',
+                                size: 12
+                            },
+                            padding: 20
+                        }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+    </script>
+</body>
+</html>

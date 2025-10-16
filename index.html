@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三天三夜桌游社 - 选择语言</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1', // 主色调：靛蓝色
+                        secondary: '#EC4899', // 辅助色：粉红色
+                        dark: '#1F2937', // 深色
+                        accent: '#F59E0B', // 强调色：琥珀色
+                    },
+                    fontFamily: {
+                        game: ['"Press Start 2P"', 'cursive', 'sans-serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            }
+            .language-card {
+                @apply relative w-full md:w-64 h-80 rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 transform hover:scale-105 hover:shadow-2xl;
+            }
+            .language-overlay {
+                @apply absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/40 to-transparent transition-opacity duration-300;
+            }
+            .language-card:hover .language-overlay {
+                @apply bg-gradient-to-t from-dark/90 via-dark/60 to-dark/20;
+            }
+        }
+    </style>
+    
+    <!-- 引入Google字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-dark to-gray-900 min-h-screen flex flex-col items-center justify-center p-4">
+    <!-- 背景装饰 -->
+    <div class="absolute top-0 left-1/4 w-64 h-64 rounded-full bg-primary/20 blur-3xl animate-pulse-slow"></div>
+    <div class="absolute bottom-0 right-1/4 w-80 h-80 rounded-full bg-secondary/20 blur-3xl animate-pulse-slow" style="animation-delay: 2s;"></div>
+    
+    <div class="container mx-auto max-w-5xl z-10 text-center">
+        <!-- 品牌标识 -->
+        <div class="mb-12 animate-float">
+            <div class="flex items-center justify-center gap-3 mb-4">
+                <img src="assets/images/logo.svg" alt="Three Days & Three Nights Logo" style="width: 10rem;">
+            </div>
+            <p class="text-gray-300 text-lg md:text-xl">桌游社 | Board Game Studio</p>
+        </div>
+        
+        <!-- 语言选择标题 -->
+        <div class="mb-16">
+            <h1 class="text-2xl md:text-4xl font-bold text-white mb-4">选择语言 | Select Language</h1>
+            <p class="text-gray-400 max-w-lg mx-auto">请选择您偏好的语言浏览网站 | Please choose your preferred language to browse the website</p>
+        </div>
+        
+        <!-- 语言选择卡片 -->
+        <div class="flex flex-col md:flex-row justify-center gap-6 flex-wrap">
+
+            <!-- 英文 -->
+            <a href="index_en.html" class="language-card group">
+                <img src="assets/images/langs/en-400x600.jpg" alt="英文网站预览" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="language-overlay"></div>
+                <div class="absolute bottom-0 left-0 p-6 text-left z-10">
+                    <div class="w-12 h-12 rounded-full bg-secondary/90 flex items-center justify-center mb-4">
+                        <span class="font-bold text-white text-xl">En</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2">English</h2>
+                    <p class="text-gray-200">英文版本</p>
+                    <div class="mt-6 transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                        <span class="inline-block bg-secondary text-white px-4 py-2 rounded-full text-sm font-medium">
+                            Click to enter <i class="fa fa-arrow-right ml-1"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- 中文(简体) -->
+            <a href="index_zh-Hans.html" class="language-card group">
+                <img src="assets/images/langs/zh-Hans-400x600.jpg" alt="中文(简体)网站预览" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="language-overlay"></div>
+                <div class="absolute bottom-0 left-0 p-6 text-left z-10">
+                    <div class="w-12 h-12 rounded-full bg-primary/90 flex items-center justify-center mb-4">
+                        <span class="font-bold text-white text-xl">简</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2">简体中文</h2>
+                    <p class="text-gray-200">Simplified Chinese</p>
+                    <div class="mt-6 transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                        <span class="inline-block bg-primary text-white px-4 py-2 rounded-full text-sm font-medium">
+                            点击进入 <i class="fa fa-arrow-right ml-1"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- 中文(繁体) -->
+            <a href="index_zh-Hant.html" class="language-card group">
+                <img src="assets/images/langs/zh-Hant-400x600.jpg" alt="中文(繁体)网站预览" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="language-overlay"></div>
+                <div class="absolute bottom-0 left-0 p-6 text-left z-10">
+                    <div class="w-12 h-12 rounded-full bg-indigo-500/90 flex items-center justify-center mb-4">
+                        <span class="font-bold text-white text-xl">繁</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2">繁體中文</h2>
+                    <p class="text-gray-200">Traditional Chinese</p>
+                    <div class="mt-6 transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                        <span class="inline-block bg-indigo-500 text-white px-4 py-2 rounded-full text-sm font-medium">
+                            點擊進入 <i class="fa fa-arrow-right ml-1"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- 日文 -->
+            <a href="index_ja.html" class="language-card group">
+                <img src="assets/images/langs/ja-400x600.jpg" alt="日文网站预览" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="language-overlay"></div>
+                <div class="absolute bottom-0 left-0 p-6 text-left z-10">
+                    <div class="w-12 h-12 rounded-full bg-red-500/90 flex items-center justify-center mb-4">
+                        <span class="font-bold text-white text-xl">日</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2">日本語</h2>
+                    <p class="text-gray-200">Japanese Version</p>
+                    <div class="mt-6 transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                        <span class="inline-block bg-red-500 text-white px-4 py-2 rounded-full text-sm font-medium">
+                            クリックして入る <i class="fa fa-arrow-right ml-1"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- 韩文 -->
+            <a href="index_ko.html" class="language-card group">
+                <img src="assets/images/langs/ko-400x600.jpg" alt="韩文网站预览" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="language-overlay"></div>
+                <div class="absolute bottom-0 left-0 p-6 text-left z-10">
+                    <div class="w-12 h-12 rounded-full bg-blue-500/90 flex items-center justify-center mb-4">
+                        <span class="font-bold text-white text-xl">한</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2">한국어</h2>
+                    <p class="text-gray-200">Korean Version</p>
+                    <div class="mt-6 transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                        <span class="inline-block bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-medium">
+                            클릭하여 진입 <i class="fa fa-arrow-right ml-1"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- 法语 -->
+            <a href="index_fr.html" class="language-card group">
+                <img src="assets/images/langs/fr-400x600.jpg" alt="法语网站预览" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="language-overlay"></div>
+                <div class="absolute bottom-0 left-0 p-6 text-left z-10">
+                    <div class="w-12 h-12 rounded-full bg-indigo-400/90 flex items-center justify-center mb-4">
+                        <span class="font-bold text-white text-xl">Fr</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2">Français</h2>
+                    <p class="text-gray-200">French Version</p>
+                    <div class="mt-6 transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                        <span class="inline-block bg-indigo-400 text-white px-4 py-2 rounded-full text-sm font-medium">
+                            Cliquez pour entrer <i class="fa fa-arrow-right ml-1"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <!-- 页脚 -->
+        <div class="mt-16 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+            <p>&copy; 2025 三天三夜桌游社 | SanTianSanYe Board Game Studio</p>
+            <p class="mt-2">santiansanye.com</p>
+        </div>
+    </div>
+    
+    <!-- 简单的页面加载动画效果 -->
+    <script>
+        // 页面加载时的淡入效果
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('opacity-100');
+            document.body.classList.remove('opacity-0');
+        });
+        
+        // 为链接添加点击效果
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                // 可以在这里添加页面切换动画
+                document.body.classList.add('opacity-0');
+                document.body.classList.remove('opacity-100');
+                
+                // 短暂延迟后再跳转，让动画有时间完成
+                setTimeout(() => {
+                    window.location.href = this.href;
+                }, 300);
+                
+                e.preventDefault();
+            });
+        });
+    </script>
+</body>
+</html>

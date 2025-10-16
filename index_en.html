@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three Days & Three Nights - Board Games × APP Games</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- 引入Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    
+    <!-- 自定义Tailwind配置 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1', // 主色调：靛蓝色，传达创意与游戏感
+                        secondary: '#EC4899', // 辅助色：粉红色，增添活力
+                        dark: '#1F2937', // 深色：用于文本和背景
+                        light: '#F9FAFB', // 浅色：用于背景
+                        accent: '#F59E0B', // 强调色：琥珀色，用于CTA按钮
+                    },
+                    fontFamily: {
+                        game: ['"Press Start 2P"', 'cursive', 'sans-serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            }
+            .card-hover {
+                @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+            }
+            .btn-primary {
+                @apply bg-accent hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg;
+            }
+            .btn-secondary {
+                @apply bg-primary hover:bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg;
+            }
+        }
+    </style>
+    
+    <!-- 引入Google字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-dark to-gray-800 text-light min-h-screen">
+    <!-- 导航栏 -->
+    <header id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-dark/80 backdrop-blur-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="/" class="flex items-center gap-2">
+                <!-- <div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
+                    <i class="fa fa-gamepad text-2xl"></i>
+                </div>
+                <span class="font-game text-xl text-white">三天三夜</span> -->
+                <div class="flex items-center justify-center gap-3 mb-4">
+                    <img src="assets/images/logo.svg" alt="Three Days & Three Nights Logo" style="width: 5rem;">
+                </div>
+            </a>
+            
+            <!-- 桌面导航 -->
+            <nav class="hidden md:flex items-center space-x-8">
+                <a href="#home" class="text-white hover:text-accent transition-colors font-medium">Home</a>
+                <a href="#games" class="text-white hover:text-accent transition-colors font-medium">Games</a>
+                <a href="#physical" class="text-white hover:text-accent transition-colors font-medium">Physical Games</a>
+                <a href="#about" class="text-white hover:text-accent transition-colors font-medium">About Us</a>
+                <a href="#contact" class="text-white hover:text-accent transition-colors font-medium">Contact Us</a>
+                <!-- <a href="#" class="btn-primary py-2 px-4 text-sm">
+                    <i class="fa fa-download mr-2"></i>Download APP
+                </a> -->
+            </nav>
+            
+            <!-- 移动端菜单按钮 -->
+            <button id="menuBtn" class="md:hidden text-white text-2xl">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- 移动端导航菜单 -->
+        <div id="mobileMenu" class="md:hidden hidden bg-gray-900/95 backdrop-blur-md">
+            <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
+                <a href="#home" class="text-white hover:text-accent py-2 border-b border-gray-700 transition-colors">Home</a>
+                <a href="#games" class="text-white hover:text-accent py-2 border-b border-gray-700 transition-colors">Games</a>
+                <a href="#physical" class="text-white hover:text-accent py-2 border-b border-gray-700 transition-colors">Physical Games</a>
+                <a href="#about" class="text-white hover:text-accent py-2 border-b border-gray-700 transition-colors">About Us</a>
+                <a href="#contact" class="text-white hover:text-accent py-2 transition-colors">Contact Us</a>
+                <!-- <a href="#" class="btn-primary text-center">
+                    <i class="fa fa-download mr-2"></i>Download APP
+                </a> -->
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- 英雄区域 -->
+        <section id="home" class="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
+            <div class="absolute inset-0 bg-[url('assets/images/bgs/bg0.jpg')] bg-cover bg-center opacity-100"></div>
+            <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-dark/50 to-dark"></div>
+            
+            <!-- 装饰元素 -->
+            <div class="absolute top-20 left-10 w-20 h-20 rounded-full bg-primary/30 blur-xl animate-pulse-slow"></div>
+            <div class="absolute bottom-20 right-10 w-32 h-32 rounded-full bg-secondary/30 blur-xl animate-pulse-slow" style="animation-delay: 1s;"></div>
+            
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="max-w-4xl mx-auto text-center">
+                    <!-- <div class="flex items-center justify-center gap-3 mb-4 animate-float">
+                        <img src="assets/images/logo.svg" alt="Three Days & Three Nights Logo" style="width: 10rem;">
+                    </div> -->
+                    <!-- <h1 class="font-game text-[clamp(2rem,5vw,4rem)] text-white mb-6 leading-tight text-shadow animate-float">
+                        三天三夜<br>桌游社
+                    </h1> -->
+                    <div class="mb-12 animate-float">
+                        <div class="flex items-center justify-center gap-3 mb-4">
+                            <img src="assets/images/logo.svg" alt="Three Days & Three Nights Logo" style="width: 10rem;">
+                        </div>
+                        <p class="text-gray-300 text-lg md:text-xl">Board Game Studio | Board Game Studio</p>
+                    </div>
+                    <p class="text-xl md:text-2xl text-gray-300 mb-10 max-w-2xl mx-auto">
+                        We bring fun board games to your mobile phone, enjoy board game fun anytime, anywhere. Support single player challenge and multiplayer online, and physical board games for collection!
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="#games" class="btn-primary">
+                            <i class="fa fa-gamepad mr-2"></i>Explore Games
+                        </a>
+                        <a href="#physical" class="btn-secondary">
+                            <i class="fa fa-shopping-cart mr-2"></i>Buy Physical Games
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 手机展示 -->
+                <div class="mt-16 flex justify-center">
+                    <div class="relative">
+                        <div class="w-[280px] h-[560px] md:w-[320px] md:h-[640px] rounded-[3rem] border-8 border-gray-800 bg-gray-900 shadow-2xl overflow-hidden relative">
+                            <img src="assets/images/prod-new.jpg" alt="Three Days & Three Nights APP Interface" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-dark/80 to-transparent"></div>
+                        </div>
+                        <!-- 装饰元素 -->
+                        <div class="absolute -bottom-5 -right-5 w-24 h-24 bg-accent rounded-full flex items-center justify-center shadow-lg animate-pulse-slow">
+                            <span class="font-game text-white text-3xl text-center">New</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 特色介绍 -->
+        <section class="py-16 bg-dark/50">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Our <span class="text-primary">Features</span></h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">We perfectly combine traditional board games with modern technology to create a unique gaming experience</p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- 特色1 -->
+                    <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-8 card-hover border border-gray-700">
+                        <div class="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center mb-6">
+                            <i class="fa fa-mobile text-3xl text-primary"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Play Anytime, Anywhere</h3>
+                        <p class="text-gray-400">Put board games in your phone, whether commuting or resting, just open the APP to start playing, no need to carry heavy board game accessories.</p>
+                    </div>
+                    
+                    <!-- 特色2 -->
+                    <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-8 card-hover border border-gray-700">
+                        <div class="w-14 h-14 rounded-full bg-secondary/20 flex items-center justify-center mb-6">
+                            <i class="fa fa-users text-3xl text-secondary"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Flexible Game Modes</h3>
+                        <p class="text-gray-400">Support single player challenge against AI, or invite friends to play online. Whether alone or at a party, you can find suitable gameplay.</p>
+                    </div>
+                    
+                    <!-- 特色3 -->
+                    <div class="bg-gray-800/50 backdrop-blur-sm rounded-xl p-8 card-hover border border-gray-700">
+                        <div class="w-14 h-14 rounded-full bg-accent/20 flex items-center justify-center mb-6">
+                            <i class="fa fa-gift text-3xl text-accent"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Physical Collection Options</h3>
+                        <p class="text-gray-400">Love the tactile feel of traditional board games? We offer selected physical board games for purchase, allowing you to enjoy digital convenience while having physical collections.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 游戏展示区 -->
+        <section id="games" class="py-20 relative">
+            <div class="absolute inset-0 bg-[url('assets/images/bgs/3-1920x1080.jpg')] bg-cover bg-center opacity-5"></div>
+            
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-bold mb-4">Our <span class="text-primary">Games</span></h2>
+                        <p class="text-gray-400 max-w-2xl">Selected board game adaptations, preserving the core gameplay while optimizing mobile operation experience</p>
+                    </div>
+                    
+                    <!-- 游戏筛选标签 -->
+                    <!-- <div class="flex flex-wrap gap-2 mt-6 md:mt-0">
+                        <button class="game-filter active px-4 py-2 rounded-full bg-primary text-white text-sm font-medium">All Games</button>
+                        <button class="game-filter px-4 py-2 rounded-full bg-gray-700 text-white text-sm font-medium hover:bg-gray-600 transition-colors">Single Player</button>
+                        <button class="game-filter px-4 py-2 rounded-full bg-gray-700 text-white text-sm font-medium hover:bg-gray-600 transition-colors">Multiplayer</button>
+                    </div> -->
+                </div>
+                
+                <!-- 游戏卡片网格 -->
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- 游戏1 -->
+                     <div class="game-card bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700" data-type="single">
+                        <div class="relative">
+                            <img src="assets/images/games/game_colordeduce.jpg" alt="Logic Puzzle Game Cover" class="w-full h-48 object-cover">
+                            <div class="absolute top-3 right-3 bg-primary text-white text-xs font-bold px-2 py-1 rounded">Single Player</div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold mb-2">Color Deduction</h3>
+                            <p class="text-gray-400 text-sm mb-4">Puzzle board game that exercises reasoning abilities, deduce the colors and positions of balls in the password box based on feedback.</p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <!-- <i class="fa fa-star text-yellow-400"></i>
+                                    <span class="ml-1 text-sm">4.6</span> -->
+                                </div>
+                                <!-- <a href="#" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center">
+                                    Learn More <i class="fa fa-arrow-right ml-1"></i>
+                                </a> -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="game-card bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700" data-type="multiplayer">
+                        <div class="relative">
+                            <img src="assets/images/games/game_dinosaurchess.jpg" alt="Strategy Master Game Cover" class="w-full h-48 object-cover">
+                            <div class="absolute top-3 right-3 bg-secondary text-white text-xs font-bold px-2 py-1 rounded">Single/Multi</div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold mb-2">Dinosaur Cards</h3>
+                            <p class="text-gray-400 text-sm mb-4">A board game with both strategy and luck, play cards from your hand as needed, be the first to finish all your cards to win.</p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <!-- <i class="fa fa-star text-yellow-400"></i>
+                                    <span class="ml-1 text-sm">4.8</span> -->
+                                </div>
+                                <!-- <a href="#" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center">
+                                    Learn More <i class="fa fa-arrow-right ml-1"></i>
+                                </a> -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 游戏2 -->
+                    <div class="game-card bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700" data-type="single">
+                        <div class="relative">
+                            <img src="assets/images/games/game_aeroplanechess.jpg" alt="Escape Room Game Cover" class="w-full h-48 object-cover">
+                            <div class="absolute top-3 right-3 bg-secondary text-white text-xs font-bold px-2 py-1 rounded">Single/Multi</div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold mb-2">Aeroplane Chess</h3>
+                            <p class="text-gray-400 text-sm mb-4">Puzzle board game, solve a series of puzzles and escape from challenging rooms.</p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <!-- <i class="fa fa-star text-yellow-400"></i>
+                                    <span class="ml-1 text-sm">4.6</span> -->
+                                </div>
+                                <!-- <a href="#" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center">
+                                    Learn More <i class="fa fa-arrow-right ml-1"></i>
+                                </a> -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 游戏3 -->
+                    <div class="game-card bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700" data-type="multiplayer">
+                        <div class="relative">
+                            <img src="assets/images/games/game_workplace.jpg" alt="Werewolf Night Game Cover" class="w-full h-48 object-cover">
+                            <div class="absolute top-3 right-3 bg-secondary text-white text-xs font-bold px-2 py-1 rounded">Single/Multi</div>
+                            <div class="absolute top-3 left-3 bg-accent text-white text-xs font-bold px-2 py-1 rounded">Popular</div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold mb-2">Du Du La's Promotion Challenge</h3>
+                            <p class="text-gray-400 text-sm mb-4">A fun quiz game about workplace promotion and progression.</p>
+                            <div class="flex justify-between items-center">
+                                <!-- <div class="flex items-center">
+                                    <i class="fa fa-star text-yellow-400"></i>
+                                    <span class="ml-1 text-sm">4.9</span>
+                                </div> -->
+                                <!-- <a href="#" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center">
+                                    Learn More <i class="fa fa-arrow-right ml-1"></i>
+                                </a> -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 游戏4 -->
+                    <div class="game-card bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700" data-type="single">
+                        <div class="relative">
+                            <img src="assets/images/games/game_tarotcards.jpg" alt="Card Master Game Cover" class="w-full h-48 object-cover">
+                            <div class="absolute top-3 right-3 bg-primary text-white text-xs font-bold px-2 py-1 rounded">Single Player</div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold mb-2">Tarot Cards</h3>
+                            <p class="text-gray-400 text-sm mb-4">A mysterious tool popular worldwide for interpreting the future and exploring the inner self through card imagery.</p>
+                            <div class="flex justify-between items-center">
+                                <!-- <div class="flex items-center">
+                                    <i class="fa fa-star text-yellow-400"></i>
+                                    <span class="ml-1 text-sm">4.7</span>
+                                </div> -->
+                                <!-- <a href="#" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center">
+                                    Learn More <i class="fa fa-arrow-right ml-1"></i>
+                                </a> -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 游戏5 -->
+                    <div class="game-card bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700" data-type="multiplayer">
+                        <div class="relative">
+                            <img src="assets/images/games/game_mancala.jpg" alt="City Building Game Cover" class="w-full h-48 object-cover">
+                            <div class="absolute top-3 right-3 bg-secondary text-white text-xs font-bold px-2 py-1 rounded">Single/Two Players</div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold mb-2">Mancala</h3>
+                            <p class="text-gray-400 text-sm mb-4">A strategic board game where players compete for victory by planting and harvesting pieces.</p>
+                            <div class="flex justify-between items-center">
+                                <!-- <div class="flex items-center">
+                                    <i class="fa fa-star text-yellow-400"></i>
+                                    <span class="ml-1 text-sm">4.5</span>
+                                </div> -->
+                                <!-- <a href="#" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center">
+                                    Learn More <i class="fa fa-arrow-right ml-1"></i>
+                                </a> -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 游戏6 -->
+                    <div class="game-card bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700" data-type="single">
+                        <div class="relative">
+                            <img src="assets/images/games/game_thelordsdecision.jpg" alt="Adventure Journey Game Cover" class="w-full h-48 object-cover">
+                            <div class="absolute top-3 right-3 bg-secondary text-white text-xs font-bold px-2 py-1 rounded">Single/Multi</div>
+                            <div class="absolute top-3 left-3 bg-accent text-white text-xs font-bold px-2 py-1 rounded">New Release</div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold mb-2">Lord's Decision</h3>
+                            <p class="text-gray-400 text-sm mb-4">Role-playing board game where each player owns a city and makes a decision every round.</p>
+                            <div class="flex justify-between items-center">
+                                <!-- <div class="flex items-center">
+                                    <i class="fa fa-star text-yellow-400"></i>
+                                    <span class="ml-1 text-sm">4.8</span>
+                                </div> -->
+                                <!-- <a href="#" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center">
+                                    Learn More <i class="fa fa-arrow-right ml-1"></i>
+                                </a> -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 游戏7 -->
+                    <div class="game-card bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700" data-type="multiplayer">
+                        <div class="relative">
+                            <img src="assets/images/games/game_gemsecret.jpg" alt="Trade Merchant Game Cover" class="w-full h-48 object-cover">
+                            <div class="absolute top-3 right-3 bg-secondary text-white text-xs font-bold px-2 py-1 rounded">Single/Two Players</div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-xl font-bold mb-2">Gem Secret</h3>
+                            <p class="text-gray-400 text-sm mb-4">Economic strategy board game, accumulate wealth by buying and selling goods to become the richest merchant.</p>
+                            <div class="flex justify-between items-center">
+                                <!-- <div class="flex items-center">
+                                    <i class="fa fa-star text-yellow-400"></i>
+                                    <span class="ml-1 text-sm">4.4</span>
+                                </div> -->
+                                <!-- <a href="#" class="text-primary hover:text-primary/80 font-medium text-sm flex items-center">
+                                    Learn More <i class="fa fa-arrow-right ml-1"></i>
+                                </a> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- <div class="text-center mt-12">
+                    <a href="#" class="btn-secondary inline-flex items-center">
+                        View All Games <i class="fa fa-chevron-right ml-2"></i>
+                    </a>
+                </div> -->
+            </div>
+        </section>
+        
+        <!-- 游戏数据统计 -->
+        <section class="py-16 bg-gray-900/80 backdrop-blur-sm">
+            <div class="container mx-auto px-4">
+                <!-- <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Player <span class="text-primary">Statistics</span></h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">Our games are loved by players around the world</p>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+                    <div class="bg-gray-800/50 rounded-xl p-6 text-center">
+                        <div class="text-4xl md:text-5xl font-bold text-primary mb-2 counter" data-target="500000">0</div>
+                        <p class="text-gray-400">Registered Users</p>
+                    </div>
+                    <div class="bg-gray-800/50 rounded-xl p-6 text-center">
+                        <div class="text-4xl md:text-5xl font-bold text-secondary mb-2 counter" data-target="12">0</div>
+                        <p class="text-gray-400">Number of Games</p>
+                    </div>
+                    <div class="bg-gray-800/50 rounded-xl p-6 text-center">
+                        <div class="text-4xl md:text-5xl font-bold text-accent mb-2 counter" data-target="15000000">0</div>
+                        <p class="text-gray-400">Game Sessions</p>
+                    </div>
+                    <div class="bg-gray-800/50 rounded-xl p-6 text-center">
+                        <div class="text-4xl md:text-5xl font-bold text-green-400 mb-2 counter" data-target="4.7">0</div>
+                        <p class="text-gray-400">Average Rating</p>
+                    </div>
+                </div> -->
+                
+                <!-- 游戏类型分布图 -->
+                <div class="bg-gray-800/50 rounded-xl p-6 md:p-8">
+                    <h3 class="text-xl font-bold mb-6">Game Type Distribution (Including Planned Games)</h3>
+                    <div class="h-80">
+                        <canvas id="gameTypeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+
+        <!-- 实物桌游购买区 -->
+        <section id="physical" class="py-20 relative">
+            <div class="absolute inset-0 bg-[url('assets/images/bgs/4-1920x1080.jpg')] bg-cover bg-center opacity-5"></div>
+            
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Physical <span class="text-secondary">Board Games</span> for Purchase</h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">In addition to the APP version, we also offer high-quality physical board games for you to enjoy traditional board game fun</p>
+                </div>
+                
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- 实物1 -->
+                    <div class="bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700">
+                        <div class="relative">
+                            <img src="assets/images/products/prod_colordeduce.jpg" alt="Werewolf Night Physical Board Game" class="w-full h-48 object-cover">
+                            <!-- <div class="absolute top-3 left-3 bg-accent text-white text-xs font-bold px-2 py-1 rounded">Bestseller</div> -->
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold">Color Deduction - Physical Version</h3>
+                                <span class="text-accent font-bold">¥?</span>
+                            </div>
+                            <p class="text-gray-400 text-sm mb-4">Includes password box, game board, colored balls, feedback blocks and rule manual, requires 2 players.</p>
+                            <button class="w-full bg-primary hover:bg-primary/80 text-white font-bold py-2 rounded-lg transition-colors flex items-center justify-center" style="background-color: #3f3f3f;">
+                                <i class="fa fa-shopping-cart mr-2"></i> 
+                                Coming Soon
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 实物2 -->
+                    <div class="bg-gray-800/60 backdrop-blur-sm rounded-xl overflow-hidden card-hover border border-gray-700">
+                        <div class="relative">
+                            <img src="assets/images/products/prod_dinosaurchess.jpg" alt="Werewolf Night Physical Board Game" class="w-full h-48 object-cover">
+                            <!-- <div class="absolute top-3 left-3 bg-accent text-white text-xs font-bold px-2 py-1 rounded">Bestseller</div> -->
+                        </div>
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold">Dinosaur Cards - Physical Version</h3>
+                                <span class="text-accent font-bold">¥?</span>
+                            </div>
+                            <p class="text-gray-400 text-sm mb-4">Includes game table, a set of dinosaur cards, dinosaur encyclopedia and rule manual, suitable for 2~4 players.</p>
+                            <button class="w-full bg-primary hover:bg-primary/80 text-white font-bold py-2 rounded-lg transition-colors flex items-center justify-center" style="background-color: #3f3f3f;">
+                                <i class="fa fa-shopping-cart mr-2"></i> 
+                                Coming Soon
+                            </button>
+                        </div>
+                    </div>
+                   
+                </div>
+                
+            </div>
+        </section>
+        
+
+        <!-- 关于我们 -->
+        <section id="about" class="py-20 bg-gray-900/80 backdrop-blur-sm">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col lg:flex-row gap-12 items-center">
+                    <div class="lg:w-1/2">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-6">About <span class="text-primary">Three Days & Three Nights</span></h2>
+                        <p class="text-gray-300 mb-4">
+                            "Three Days & Three Nights" Board Game Studio was founded in Shanghai in 2025 by a group of board game enthusiasts, game designers and developers. Our mission is to bring the joy of classic board games to more people while expanding the possibilities of board games using modern technology.
+                        </p>
+                        <p class="text-gray-300 mb-6">
+                            We believe that board games are not just a form of entertainment, but also a bridge connecting people. Whether it's face-to-face physical board games or online games through the APP, the core value lies in bringing joy and promoting communication.
+                        </p>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-8">
+                            <div class="bg-gray-800/50 p-4 rounded-lg">
+                                <h4 class="font-bold text-primary mb-1">Our Vision</h4>
+                                <p class="text-gray-400 text-sm">Make board games a part of everyone's life</p>
+                            </div>
+                            <div class="bg-gray-800/50 p-4 rounded-lg">
+                                <h4 class="font-bold text-secondary mb-1">Our Mission</h4>
+                                <p class="text-gray-400 text-sm">Innovate board game experiences, connect people with joy</p>
+                            </div>
+                        </div>
+                        
+                        <!-- <a href="#contact" class="btn-primary inline-flex items-center">
+                            Contact Us <i class="fa fa-envelope ml-2"></i>
+                        </a> -->
+                    </div>
+                    
+                    <div class="lg:w-1/2 grid grid-cols-2 gap-4">
+                        <img src="assets/images/imgs/30-600x800.jpg" alt="Board Game Studio Team Photo" class="rounded-lg h-64 object-cover col-span-2 row-span-2">
+                        <img src="assets/images/imgs/32-600x400.jpg" alt="Game Design Process" class="rounded-lg h-32 object-cover">
+                        <img src="assets/images/imgs/33-600x400.jpg" alt="Board Game Testing Activity" class="rounded-lg h-32 object-cover">
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 下载APP区域 -->
+        <section class="py-20 relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20"></div>
+            <div class="absolute top-0 left-0 w-full h-full bg-[url('assets/images/bgs/5-1920x1080.jpg')] bg-cover bg-center opacity-10"></div>
+            
+            <!-- 装饰元素 -->
+            <div class="absolute top-0 right-0 w-64 h-64 rounded-full bg-primary/10 blur-3xl"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-secondary/10 blur-3xl"></div>
+            
+            <div class="container mx-auto px-4 relative z-10">
+                <div class="max-w-4xl mx-auto bg-gray-800/80 backdrop-blur-md rounded-2xl p-8 md:p-12 border border-gray-700 shadow-2xl">
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="md:w-1/2">
+                            <h2 class="text-3xl md:text-4xl font-bold mb-4">Download Our Game</h2>
+                            <p class="text-gray-300 mb-6">
+                                Enjoy board game fun anytime, anywhere, with regular updates of new games and features.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <a href="javascript:void(0)" class="bg-black hover:bg-gray-900 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center" style="background-color: #1d1d1d;">
+                                    <i class="fa fa-apple text-2xl mr-3"></i>
+                                    <div class="text-left">
+                                        <div class="text-xs">Coming Soon</div>
+                                        <div>App Store</div>
+                                    </div>
+                                </a>
+                                <a href="https://play.google.com/store/apps/developer?id=STSY" class="bg-black hover:bg-gray-900 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center" style="background-color: #1d1d1d;">
+                                    <i class="fa fa-android text-2xl mr-3"></i>
+                                    <div class="text-left">
+                                        <div class="text-xs">Coming Soon</div>
+                                        <div>Google Play</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="md:w-1/2 flex justify-center">
+                            <img src="assets/images/httpwww.png" alt="Three Days & Three Nights APP Download QR Code" class="w-48 h-48 rounded-lg shadow-lg border-4 border-white">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 联系我们 -->
+        <section id="contact" class="py-20 bg-dark/50">
+            <div class="container mx-auto px-4">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Contact <span class="text-secondary">Us</span></h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto">Have any questions or suggestions? Please feel free to contact us</p>
+                </div>
+                
+                     
+                    <div class="lg:w-2/3" style="margin: 0 auto;">
+                        <div class="bg-gray-800/60 backdrop-blur-sm rounded-xl p-8 border border-gray-700">
+                            <h3 class="text-2xl font-bold mb-6">Send a Message</h3>
+                            
+                            <form action="mailto:stsy333@gmail.com?subject=Contact Message from Website" method="post" enctype="text/plain">
+                                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                                    <div>
+                                        <label for="name" class="block text-gray-300 mb-2">Name</label>
+                                        <input type="text" id="name" name="name" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                    </div>
+                                    <div>
+                                        <label for="email" class="block text-gray-300 mb-2">Email</label>
+                                        <input type="email" id="email" name="email" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label for="subject" class="block text-gray-300 mb-2">Subject</label>
+                                    <input type="text" id="subject" name="subject" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary">
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label for="message" class="block text-gray-300 mb-2">Message</label>
+                                    <textarea id="message" name="message" rows="5" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
+                                </div>
+                                
+                                <button type="submit" class="btn-primary">
+                                    <i class="fa fa-paper-plane mr-2"></i> Send Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 py-12 border-t border-gray-800">
+        <div class="container mx-auto px-4">
+            
+            <div class="pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+                <p>Bring board games to your phone, enjoy board game fun anytime, anywhere, a bridge connecting people and games.</p>
+                <p>&copy; 2025 Three Days & Three Nights Board Game Studio. All rights reserved. Email: stsy333@gmail.com</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" class="fixed bottom-6 right-6 w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg transform transition-all duration-300 opacity-0 translate-y-10" style="z-index: 999;">
+        <i class="fa fa-arrow-up"></i>
+    </button>
+    
+    <!-- JavaScript -->
+    <script>
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        const backToTop = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 100) {
+                navbar.classList.add('py-2', 'shadow-lg');
+                navbar.classList.remove('py-3');
+                backToTop.classList.remove('opacity-0', 'translate-y-10');
+                backToTop.classList.add('opacity-100', 'translate-y-0');
+            } else {
+                navbar.classList.add('py-3');
+                navbar.classList.remove('py-2', 'shadow-lg');
+                backToTop.classList.add('opacity-0', 'translate-y-10');
+                backToTop.classList.remove('opacity-100', 'translate-y-0');
+            }
+        });
+        
+        // 移动端菜单切换
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        menuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+            if (mobileMenu.classList.contains('hidden')) {
+                menuBtn.innerHTML = '<i class="fa fa-bars"></i>';
+            } else {
+                menuBtn.innerHTML = '<i class="fa fa-times"></i>';
+            }
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // 关闭移动菜单（如果打开）
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                    menuBtn.innerHTML = '<i class="fa fa-bars"></i>';
+                }
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // 返回顶部
+        backToTop.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // 游戏筛选功能
+        const filterButtons = document.querySelectorAll('.game-filter');
+        const gameCards = document.querySelectorAll('.game-card');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // 更新按钮样式
+                filterButtons.forEach(btn => {
+                    btn.classList.remove('active', 'bg-primary');
+                    btn.classList.add('bg-gray-700');
+                });
+                this.classList.add('active', 'bg-primary');
+                this.classList.remove('bg-gray-700');
+                
+                const filter = this.textContent.trim();
+                
+                // 筛选游戏卡片
+                gameCards.forEach(card => {
+                    if (filter === 'All Games' || card.dataset.type === filter.toLowerCase()) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+        
+        // 数字计数动画
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200; // 动画速度
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counter = entry.target;
+                    const target = +counter.getAttribute('data-target');
+                    const count = +counter.innerText;
+                    const increment = target / speed;
+                    
+                    if (count < target) {
+                        counter.innerText = (count + increment).toFixed(target % 1 === 0 ? 0 : 1);
+                        setTimeout(() => {
+                            counter.innerText = (count + increment).toFixed(target % 1 === 0 ? 0 : 1);
+                        }, 1);
+                    } else {
+                        counter.innerText = target.toFixed(target % 1 === 0 ? 0 : 1);
+                        observer.unobserve(counter);
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        counters.forEach(counter => {
+            observer.observe(counter);
+        });
+        
+        // 游戏类型图表
+        const ctx = document.getElementById('gameTypeChart').getContext('2d');
+        const gameTypeChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Strategy', 'Social Deduction', 'Card Games', 'Role-Playing', 'Puzzle', 'Economic Simulation'],
+                datasets: [{
+                    data: [30, 20, 15, 10, 15, 10],
+                    backgroundColor: [
+                        '#6366F1', // primary
+                        '#EC4899', // secondary
+                        '#F59E0B', // accent
+                        '#10B981', // green
+                        '#3B82F6', // blue
+                        '#8B5CF6'  // purple
+                    ],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: '#F9FAFB',
+                            font: {
+                                family: 'Inter',
+                                size: 12
+                            },
+                            padding: 20
+                        }
+                    }
+                },
+                cutout: '65%'
+            }
+        });
+    </script>
+</body>
+</html>
